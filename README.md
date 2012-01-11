@@ -4,6 +4,8 @@ A collection of addons for Ember.js framework. Some of them are just snippets of
 
 ### Ember Data Amplify
 
+Simple wrapper for amplify.js `request`.
+
 ### Ember DateTime
 
 A class representation of a date and time. It's basically a wrapper around
@@ -38,15 +40,23 @@ is true, since they are technically the same position in time.
 
 ### Ember GeoLocation
 
+A class representation of Browsers HTML5 geolocation API.
+
 ### Ember Module
+
+Modules loader. WARNING: Work In Progress.
 
 ### Ember ObjectProxy
 
+Same as Ember.ArrayProxy but for objects :)
+
 ### Ember Routing
+
+Hash / pushHistory (HTML5) router.
 
 ### Ember Utils
 
-#### Enumerable
+This addon provide some extentions to `Ember.Enumerable` interface :
 
 * flatten
 * sortProperty
