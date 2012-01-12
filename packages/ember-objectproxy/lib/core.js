@@ -53,7 +53,6 @@ Ember.ObjectProxy = Ember.Object.extend({
   }).property('content', 'content.@each', 'allowsMultipleContent').cacheable(),
 
   init: function() {
-    this._super();
     this.contentDidChange();
   },
 
@@ -67,11 +66,15 @@ Ember.ObjectProxy = Ember.Object.extend({
   unknownProperty: function(key) {
     var content = get(this, 'observableContent');
 
+    this.observesProperty(key);
+
     return content ? getPath(content, key) : undefined;
   },
 
   setUnknownProperty: function(key, value) {
     var content = get(this, 'observableContent');
+
+    this.observesProperty(key);
 
     if (content) { setPath(content, key, value); }
 
@@ -81,38 +84,35 @@ Ember.ObjectProxy = Ember.Object.extend({
   contentWillChange: Ember.beforeObserver(function(context, key) {
     if (key !== 'observableContent') { return; }
 
-    var content = get(this, 'observableContent'), observing = this._observedProperties, i, l;
+    var content = get(this, 'observableContent'), i, l;
 
     if (content) {
-      for (i = 0, l = observing.length; i < l; i++) {
-        removeObserver(content, observing[i], this.contentPropertyDidChange);
-      }
+      this.forEachObservedProperty(function(property) {
+        removeObserver(content, property, this.contentPropertyDidChange);
+      }, this);
     }
   }, 'observableContent'),
 
   contentDidChange: Ember.observer(function(context, key) {
     if (key !== 'observableContent') { return; }
 
-    var content = get(this, 'observableContent'), observing = this._observedProperties, i, l;
+    var content = get(this, 'observableContent'), i, l;
 
-    if (content && this._oldContent !== content) {
-      for (i = 0, l = observing.length; i < l; i++) {
-        addObserver(content, observing[i], this, this.contentPropertyDidChange);
-        this.contentPropertyDidChange(content, observing[i]);
-      }
-      this._oldContent = content;
+    if (content && this._lastContent !== content) {
+      this.forEachObservedProperty(function(property) {
+        addObserver(content, property, this, this.contentPropertyDidChange);
+        this.contentPropertyDidChange(content, property);
+      }, this);
+      this._lastContent = content;
     }
   }, 'observableContent'),
 
   didAddListener: function(eventName, target, method) {
-    var content = get(this, 'observableContent'), observing = this._observedProperties,
+    var content = get(this, 'observableContent'),
       property = eventName.split(':').shift();
 
-    if (!observing.contains(property)) {
-      if (content) {
-        addObserver(content, property, this, this.contentPropertyDidChange);
-      }
-      observing.push(property);
+    if (!this.observesProperty(property) && content) {
+      addObserver(content, property, this, this.contentPropertyDidChange);
     }
   },
 
@@ -120,7 +120,23 @@ Ember.ObjectProxy = Ember.Object.extend({
     this.propertyDidChange(property);
   },
 
-  _oldContent: null,
+  _lastContent: null,
 
-  _observedProperties: Ember.A()
+  observedProperties: Ember.computed(function() {
+    return new Ember.Set();
+  }).property().cacheable(),
+
+  forEachObservedProperty: function(callback, target) {
+    get(this, 'observedProperties').forEach(callback, target);
+  },
+
+  observesProperty: function(property) {
+    var observed = get(this, 'observedProperties');
+    if (observed.contains(property)) {
+      return true;
+    } else {
+      observed.add(property);
+    }
+    return false;
+  }
 });
