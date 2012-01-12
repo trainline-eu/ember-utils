@@ -24,10 +24,10 @@ var stateProperty = Ember.computed(function(key) {
 }).property();
 
 var moduleState = Ember.State.extend({
-  isReady: stateProperty,
-  isLoaded: stateProperty,
-  isLoading: stateProperty,
   isPrefetching: stateProperty,
+  isLoading: stateProperty,
+  isLoaded: stateProperty,
+  isReady: stateProperty,
   isError: stateProperty
 });
 
@@ -54,10 +54,10 @@ var fetch = function(stateManager, execute) {
 
 var states = {
   rootState: Ember.State.create({
-    isReady: false,
-    isLoaded: false,
-    isLoading: false,
     isPrefetching: false,
+    isLoading: false,
+    isLoaded: false,
+    isReady: false,
     isError: false,
 
     load: function(stateManager) {
@@ -122,10 +122,11 @@ var retrieveFromCurrentState = Ember.computed(function(key) {
 
 Ember.Module = Ember.Object.extend({
 
-  isReady: retrieveFromCurrentState,
-  isLoaded: retrieveFromCurrentState,
-  isLoading: retrieveFromCurrentState,
   isPrefetching: retrieveFromCurrentState,
+  isLoading: retrieveFromCurrentState,
+  isLoaded: retrieveFromCurrentState,
+  isReady: retrieveFromCurrentState,
+  isError: retrieveFromCurrentState,
 
   isPrefetched: false,
   prefetchDelay: 500,

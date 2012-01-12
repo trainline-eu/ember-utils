@@ -1,6 +1,22 @@
 
 var slice = Array.prototype.slice;
-
+/**
+ * App.data = {
+ *   tasks: Ember.AmplifyDataRequest.create({
+ *     all: function(target, method) {
+ *       return this.request('tasks.get', null, target, method, this.args(arguments));
+ *     },
+ *     get: function(id, target, method) {
+ *       return this.request('tasks.get', {id: id}, target, method, this.args(arguments, 3));
+ *     }
+ *   })
+ * };
+ *
+ * App.data.tasks.all(function() {});
+ * App.data.tasks.get(42, function() {});
+ *
+ * @class Ember.AmplifyDataRequest
+ */
 Ember.AmplifyDataRequest = Ember.Object.extend({
 
   /**
