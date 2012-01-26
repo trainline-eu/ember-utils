@@ -1,27 +1,19 @@
 
-Ember.Enumerable.reopen({
+var flatten = function() {
+  return this.reduce(function(array, value) {
+    if (value && value.isEnumerable) {
+      return array.concat(flatten.apply(value));
+    } else {
+      array.push(value);
+      return array;
+    }
+  }, []);
+};
 
-  flatten: function() {
-    return this.reduce(function(array, value) {
-      if (Ember.typeOf(value) === 'array') {
-        return array.concat(value.flatten());
-      } else if (Ember.isArray(value) && value.toArray) {
-        return array.concat(value.toArray().flatten());
-      } else {
-        array.push(value);
-        return array;
-      }
-    }, Ember.A());
-  },
+var EnumerableExt = Ember.Mixin.create({
 
-  /**
-    Returns an array sorted by the value of the passed key parameters.
-    null objects will be sorted first.  You can pass either an array of keys
-    or multiple parameters which will act as key names
+  flatten: flatten,
 
-    @param {String} key one or more key names
-    @returns {Array}
-  */
   sortProperty: function(key) {
     var keys = (typeof key === 'string') ? arguments : key,
         len  = keys.length,
@@ -48,3 +40,9 @@ Ember.Enumerable.reopen({
     });
   }
 });
+
+Ember.Enumerable.reopen(EnumerableExt);
+
+if (Ember.EXTEND_PROTOTYPES) {
+  EnumerableExt.apply(Array.prototype);
+}

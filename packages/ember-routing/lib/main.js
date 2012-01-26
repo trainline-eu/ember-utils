@@ -1,1 +1,0 @@
-require('ember-routing/core');

@@ -1,1 +1,0 @@
-require('ember-utils/enumerable');

@@ -1,4 +1,4 @@
-abort "Please use Ruby 1.9 to build Ember.js!" if RUBY_VERSION !~ /^1\.9/
+abort "Please use Ruby 1.9 to build Copal.js!" if RUBY_VERSION !~ /^1\.9/
 
 require "bundler/setup"
 require "erb"
@@ -56,22 +56,26 @@ end
 
 # Create ember:package tasks for each of the Ember packages
 namespace :ember do
-  %w(data-amplify datetime geolocation module objectproxy routing utils).each do |package|
+  %w(datetime form geolocation module orientation objectproxy responder routing utils validators).each do |package|
     task package => compile_package_task("ember-#{package}", "ember-#{package}")
   end
 end
 
 # Create a build task that depends on all of the package dependencies
-task :build => ["ember:data-amplify", "ember:datetime", "ember:geolocation", "ember:module", "ember:objectproxy", "ember:routing", "ember:utils"]
+task :build => ["ember:datetime", "ember:form", "ember:geolocation", "ember:module", "ember:orientation",
+  "ember:objectproxy", "ember:responder", "ember:routing", "ember:utils", "ember:validators"]
 
 distributions = {
-  "ember-data-amplify" => ["ember-data-amplify"],
   "ember-datetime" => ["ember-datetime"],
+  "ember-form" => ["ember-form"],
   "ember-geolocation" => ["ember-geolocation"],
   "ember-module" => ["ember-module"],
+  "ember-orientation" => ["ember-orientation"],
   "ember-objectproxy" => ["ember-objectproxy"],
+  "ember-responder" => ["ember-responder"],
   "ember-routing" => ["ember-routing"],
-  "ember-utils" => ["ember-utils"]
+  "ember-utils" => ["ember-utils"],
+  "ember-validators" => ["ember-validators"]
 }
 
 distributions.each do |name, libraries|
