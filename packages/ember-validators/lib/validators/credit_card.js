@@ -3,9 +3,7 @@ require('ember-validators/validators/validator');
 var get = Ember.get;
 
 Ember.Validator.CreditCard = Ember.Validator.extend({
-
-  errorMessage: 'Invalid CreditCard',
-
+  name: 'creditCard',
   validate: function(form, field) {
     return this.checkNumber(get(field, 'value'));
   },
@@ -80,4 +78,4 @@ Ember.Validator.CreditCard = Ember.Validator.extend({
     return bResult; // Return the results
   }
 
-}) ;
+});

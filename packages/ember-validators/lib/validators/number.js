@@ -3,9 +3,7 @@ require('ember-validators/validators/validator');
 var get = Ember.get;
 
 Ember.Validator.Number = Ember.Validator.extend({
-
-  errorMessage: 'Invalid Number',
-
+  name: 'number',
   validate: function(form, field) {
     var value = get(field, 'value');
     return (value === '') || !(isNaN(value) || isNaN(parseFloat(value)));

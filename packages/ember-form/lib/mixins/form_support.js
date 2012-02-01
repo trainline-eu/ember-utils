@@ -4,6 +4,7 @@ Ember.FormSupport = Ember.Mixin.create({
   hasFormSupport: true,
 
   isSubmit: false,
+  disabledBinding: Em.Binding.oneWay('form.disabled'),
 
   form: Ember.computed(function() {
     return this.nearestInstanceOf(Ember.Form);
@@ -16,7 +17,6 @@ Ember.FormSupport = Ember.Mixin.create({
 });
 
 Ember.FieldSupport = Ember.Mixin.create(Ember.ResponderSupport, Ember.Validatable, Ember.FormSupport, {
-
   hasFieldSupport: true,
 
   didInsertElement: function() {
@@ -36,15 +36,6 @@ Ember.FieldSupport = Ember.Mixin.create(Ember.ResponderSupport, Ember.Validatabl
     }
     this._super();
   },
-
-  // keyDown: function(evt) {
-  //   this._super(evt);
-
-  //   if (!this.performValidateKeyDown(evt)) {
-  //     evt.preventDefault();
-  //     evt.stopPropagation();
-  //   }
-  // },
 
   becomeFirstResponder: function() {
     this._super();

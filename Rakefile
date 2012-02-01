@@ -56,19 +56,20 @@ end
 
 # Create ember:package tasks for each of the Ember packages
 namespace :ember do
-  %w(datetime form geolocation module orientation objectproxy responder routing utils validators).each do |package|
+  %w(datetime form geolocation markdown module orientation objectproxy responder routing utils validators).each do |package|
     task package => compile_package_task("ember-#{package}", "ember-#{package}")
   end
 end
 
 # Create a build task that depends on all of the package dependencies
-task :build => ["ember:datetime", "ember:form", "ember:geolocation", "ember:module", "ember:orientation",
+task :build => ["ember:datetime", "ember:form", "ember:geolocation", "ember:markdown", "ember:module", "ember:orientation",
   "ember:objectproxy", "ember:responder", "ember:routing", "ember:utils", "ember:validators"]
 
 distributions = {
   "ember-datetime" => ["ember-datetime"],
   "ember-form" => ["ember-form"],
   "ember-geolocation" => ["ember-geolocation"],
+  "ember-markdown" => ["ember-markdown"],
   "ember-module" => ["ember-module"],
   "ember-orientation" => ["ember-orientation"],
   "ember-objectproxy" => ["ember-objectproxy"],

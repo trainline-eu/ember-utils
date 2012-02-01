@@ -197,17 +197,19 @@ Ember.ResponderSupport = Ember.Mixin.create({
     if (method) { return this[method](evt); }
   },
 
-  insertNewline: Ember.K,
-
   cancel: function() {
     this.resignFirstResponder();
-  },
+  }
 
-  space: Ember.K,
-  left: Ember.K,
-  up: Ember.K,
-  right: Ember.K,
-  down: Ember.K
+  /**
+    insertNewline
+    cancel
+    space
+    left
+    up
+    right
+    down
+  **/
 });
 
 Ember.ResponderSupport.KEY_EVENTS = {

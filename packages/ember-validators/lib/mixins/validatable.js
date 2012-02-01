@@ -41,6 +41,8 @@ Ember.Validatable = Ember.Mixin.create({
   isValidBinding: Ember.Binding.not('errors.length'),
   isInvalidBinding: Ember.Binding.bool('errors.length'),
 
+  allowMultipleErrors: true,
+
   performValidate: function(partialChange) {
     set(this, 'errors', Ember.A());
     var form = get(this, 'form');

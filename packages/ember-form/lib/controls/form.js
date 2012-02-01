@@ -4,6 +4,11 @@ Ember.Form = Ember.View.extend(Ember.TargetActionSupport, {
   classNames:      ['ember-form'],
   tagName:         'form',
   propagateEvents: false,
+  disabled: false,
+
+  attributeBindings: ['novalidate'],
+  novalidate: true,
+  //invalid
 
   submit: function(evt) {
     evt.preventDefault();

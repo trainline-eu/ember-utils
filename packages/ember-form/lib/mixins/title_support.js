@@ -9,8 +9,9 @@ Ember.TitleSupport = Ember.Mixin.create({
   escapeHTML: true,
 
   formattedTitle: Ember.computed(function() {
-    var title = String(get(this, 'title'));
+    var title = get(this, 'title');
     if (!Ember.empty(title)) {
+      title = String(title);
       if (get(this, 'localize')) {
         title = Ember.String.loc(title, get(this, 'localizeOptions') || {});
       }
@@ -20,4 +21,13 @@ Ember.TitleSupport = Ember.Mixin.create({
     }
     return title;
   }).property('title', 'escapeHTML', 'localize', 'localizeOptions').cacheable()
+});
+
+Ember.TitleRenderSupport = Ember.Mixin.create({
+  render: function(buffer) {
+    buffer.push(get(this, 'formattedTitle'));
+  },
+  titleDidChange: Ember.observer(function() {
+    this.rerender();
+  }, 'formattedTitle')
 });

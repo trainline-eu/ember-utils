@@ -3,10 +3,15 @@ require('ember-validators/validators/validator');
 var get = Ember.get;
 
 Ember.Validator.Required = Ember.Validator.extend({
-
-  errorMessage: 'Is Required',
-
+  name: 'required',
   validate: function(form, field) {
-    return !Ember.empty(get(field, 'value'));
+    var value = get(field, 'value');
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      value = value.replace(/\s+/, '');
+    }
+    return !Ember.empty(value);
   }
 });

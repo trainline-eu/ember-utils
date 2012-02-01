@@ -32,13 +32,21 @@ var fmt = Ember.String.fmt, classify = Ember.String.classify;
 
 Ember.Validator = Ember.Object.extend({
 
-  errorMessage: 'Validation Error',
+  name: 'validation',
+  errorMessage: 'Validation Error : (%@)',
   attachTo: Ember.K,
   detachFrom: Ember.K,
 
   validateError: function(form, field) {
-    var errorMessage = get(field, 'errorMessage') || get(this, 'errorMessage');
-    get(field, 'errors').pushObject(errorMessage);
+    var name = get(this, 'name'),
+        errorProperty = name + 'ErrorMessage',
+        errorMessage = get(field, errorProperty) || fmt(get(this, 'errorMessage'), [name]),
+        errors = get(field, 'errors'),
+        allowMultipleErrors = get(field, 'allowMultipleErrors');
+
+    if (get(errors, 'length') === 0 || allowMultipleErrors) {
+      errors.pushObject(errorMessage);
+    }
     return Ember.Validator.ERROR;
   },
 
@@ -81,11 +89,9 @@ Ember.Validator.reopenClass({
       validatorKey = getPath(window, validatorKey);
     }
 
-    if (Ember.Validator.detectInstance(validatorKey)) {
-      validatorKey = validatorKey;
-    } else if (Ember.Validator.detect(validatorKey)) {
+    if (Ember.Validator.detect(validatorKey)) {
       validatorKey = validatorKey.create();
-    } else {
+    } else if (!Ember.Validator.detectInstance(validatorKey)) {
       validatorKey = undefined;
     }
 
