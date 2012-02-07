@@ -1,3 +1,6 @@
+require('ember-form/mixins/form_support');
+require('ember-form/controls/label');
+
 var get = Ember.get;
 
 Ember.Form = Ember.View.extend(Ember.TargetActionSupport, {
@@ -15,13 +18,15 @@ Ember.Form = Ember.View.extend(Ember.TargetActionSupport, {
 
     this.validateSubmit();
 
-    Ember.run.schedule('sync', this, function() {
-      if (get(this, 'isValid')) {
-        this.triggerAction();
-      }
-    });
+    Ember.run.sync();
+
+    if (get(this, 'isValid')) { this.triggerAction(); }
 
     return Ember.get(this, 'propagateEvents');
+  },
+
+  reset: function() {
+    get(this, 'fieldsWithError').invoke('resetValidate');
   },
 
   fields: Ember.computed(function() { return Ember.A(); }).cacheable(),

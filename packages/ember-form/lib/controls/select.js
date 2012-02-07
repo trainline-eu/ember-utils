@@ -5,6 +5,7 @@ var get = Ember.get, set = Ember.set;
 Ember.Select.reopen({
   classNames: ['ember-select'],
   localize: true,
+  escapeHTML: true,
   change: function() {
     var selectedIndex = (this.$()[0] && this.$()[0].selectedIndex) || 0,
         content = get(this, 'content'),
@@ -20,5 +21,7 @@ Ember.Select.reopen({
 
 Ember.SelectOption.reopen(Ember.TitleSupport, Ember.TitleRenderSupport, {
   titleBinding: 'label',
-  localizeBinding: 'parentView.localize'
+  localizeBinding: 'parentView.localize',
+  escapeHTMLBinding: 'parentView.escapeHTML',
+  template: null
 });

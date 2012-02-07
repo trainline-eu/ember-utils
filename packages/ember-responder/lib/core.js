@@ -194,7 +194,7 @@ Ember.ResponderSupport = Ember.Mixin.create({
 
     if (this._elementValueDidChange) { this._elementValueDidChange(); }
 
-    if (method) { return this[method](evt); }
+    if (typeof this[method] === 'function') { return this[method](evt); }
   },
 
   cancel: function() {

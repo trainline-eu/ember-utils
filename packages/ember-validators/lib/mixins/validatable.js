@@ -20,7 +20,7 @@ Ember.Validatable = Ember.Mixin.create({
 
     var validators = get(this, 'validators'), form = get(this, 'form');
     if (typeof validators === 'string') { validators = [validators]; }
-    validators = validators.map(function(validator) {
+    validators = (validators || []).map(function(validator) {
       return Ember.String.w(validator);
     }).flatten();
     set(this, 'validators', validators);
@@ -41,7 +41,11 @@ Ember.Validatable = Ember.Mixin.create({
   isValidBinding: Ember.Binding.not('errors.length'),
   isInvalidBinding: Ember.Binding.bool('errors.length'),
 
-  allowMultipleErrors: true,
+  allowsMultipleErrors: false,
+
+  resetValidate: function() {
+    set(this, 'errors', Ember.A());
+  },
 
   performValidate: function(partialChange) {
     set(this, 'errors', Ember.A());

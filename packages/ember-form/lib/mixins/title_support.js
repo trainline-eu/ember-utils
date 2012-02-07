@@ -25,7 +25,11 @@ Ember.TitleSupport = Ember.Mixin.create({
 
 Ember.TitleRenderSupport = Ember.Mixin.create({
   render: function(buffer) {
-    buffer.push(get(this, 'formattedTitle'));
+    if (get(this, 'template')) {
+      this._super(buffer);
+    } else {
+      buffer.push(get(this, 'formattedTitle'));
+    }
   },
   titleDidChange: Ember.observer(function() {
     this.rerender();

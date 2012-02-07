@@ -1,7 +1,7 @@
 var get = Ember.get, set = Ember.set, addObserver = Ember.addObserver, removeObserver = Ember.removeObserver;
 
 var isEnumerable = function(content) {
-  return  get(content, 'isEnumerable') === true || Ember.isArray(content);
+  return  get(content, 'isEnumerable') === true;
 };
 
 var getPath = function(content, key) {
@@ -140,3 +140,5 @@ Ember.ObjectProxy = Ember.Object.extend({
     return false;
   }
 });
+
+Ember.ObjectController = Ember.ObjectProxy.extend();

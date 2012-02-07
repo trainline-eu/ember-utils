@@ -1,8 +1,6 @@
 var get = Ember.get, getPath = Ember.getPath;
 
 Ember.FormSupport = Ember.Mixin.create({
-  hasFormSupport: true,
-
   isSubmit: false,
   disabledBinding: Em.Binding.oneWay('form.disabled'),
 
@@ -17,8 +15,6 @@ Ember.FormSupport = Ember.Mixin.create({
 });
 
 Ember.FieldSupport = Ember.Mixin.create(Ember.ResponderSupport, Ember.Validatable, Ember.FormSupport, {
-  hasFieldSupport: true,
-
   didInsertElement: function() {
     this._super();
     var fields = getPath(this, 'form.fields');

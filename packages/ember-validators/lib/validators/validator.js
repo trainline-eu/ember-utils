@@ -42,9 +42,9 @@ Ember.Validator = Ember.Object.extend({
         errorProperty = name + 'ErrorMessage',
         errorMessage = get(field, errorProperty) || fmt(get(this, 'errorMessage'), [name]),
         errors = get(field, 'errors'),
-        allowMultipleErrors = get(field, 'allowMultipleErrors');
+        allowsMultipleErrors = get(field, 'allowsMultipleErrors');
 
-    if (get(errors, 'length') === 0 || allowMultipleErrors) {
+    if (get(errors, 'length') === 0 || allowsMultipleErrors) {
       errors.pushObject(errorMessage);
     }
     return Ember.Validator.ERROR;

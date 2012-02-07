@@ -10,11 +10,14 @@ Ember.Button.reopen(Ember.TitleSupport, Ember.TitleRenderSupport, Ember.FormSupp
   }
 });
 
-Ember.SubmitButton = Ember.Button.extend(Ember.ResponderSupport, {
-  isSubmit: true,
-
+Ember.ResponderButton = Ember.Button.extend(Ember.ResponderSupport, {
+  target: 'form',
   triggerAction: function() {
     this._super();
     this.becomeFirstResponder();
   }
+});
+
+Ember.SubmitButton = Ember.ResponderButton.extend({
+  isSubmit: true
 });

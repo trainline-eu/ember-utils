@@ -1183,7 +1183,7 @@ if ('DS' in window) {
     },
 
     to: function(deserialized) {
-      if (deserialized instanceof Moment) {
+      if (deserialized instanceof Ember.DateTime) {
         return deserialized.toFormattedString(DS.attr.transforms.datetime.format);
       } else if (deserialized === undefined) {
         return undefined;
