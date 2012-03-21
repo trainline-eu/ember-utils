@@ -14,7 +14,8 @@ Ember.FormSupport = Ember.Mixin.create({
   }
 });
 
-Ember.FieldSupport = Ember.Mixin.create(Ember.ResponderSupport, Ember.Validatable, Ember.FormSupport, {
+//Ember.ResponderSupport
+Ember.FieldSupport = Ember.Mixin.create(Ember.Validatable, Ember.FormSupport, {
   didInsertElement: function() {
     this._super();
     var fields = getPath(this, 'form.fields');

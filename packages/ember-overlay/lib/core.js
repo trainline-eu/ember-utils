@@ -43,7 +43,6 @@ Ember.DialogView = Ember.OverlayView.extend({
   classNames: ['ember-dialog'],
   top: 100,
   width: 200,
-  height: 100,
   isModal: true,
   modalView: Ember.ModalView,
 
@@ -84,7 +83,10 @@ Ember.DialogView = Ember.OverlayView.extend({
   applyLayout: Ember.observer(function() {
     var width = get(this, 'width'),
         height = get(this, 'height');
-    this.$().width(width).height(height).css({
+    if (!!height) {
+      this.$().height(height);
+    }
+    this.$().width(width).css({
       position: 'fixed',
       zIndex: 101,
       left: 50 + '%',

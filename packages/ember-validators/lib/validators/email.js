@@ -4,7 +4,7 @@ var get = Ember.get;
 
 Ember.Validator.Email = Ember.Validator.Pattern.extend({
   name: 'email',
-  validatePattern: /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
+  validatePattern: /^([a-zA-Z0-9_\.-]+)@([\da-zA-Z\.-]+)\.([a-zA-Z\.]{2,6})$/
 });
 
 Ember.Validator.EmailOrEmpty = Ember.Validator.Email.extend({

@@ -11,26 +11,14 @@ Ember.orientation = Ember.Object.create({
     win.trigger("orientationchange.ember");
   },
 
-  /**
-   * [isPortrait description]
-   * @type {Boolean}
-   */
   isPortrait: Ember.computed(function() {
     return get(this, 'direction') === 'portrait';
   }).property('direction').cacheable(),
 
-  /**
-   * [isLandscape description]
-   * @type {Boolean}
-   */
   isLandscape: Ember.computed(function() {
     return get(this, 'direction') === 'landscape';
   }).property('direction').cacheable(),
 
-  /**
-   * [orientation description]
-   * @return {String} "portrait" | "landscape"
-   */
   direction: Ember.computed(function() {
     if ($.support.orientation) {
       return (window.orientation === 0 || window.orientation === 180) ? "portrait" : "landscape";

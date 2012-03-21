@@ -6,8 +6,8 @@ Ember.Calendar = Ember.ContainerView.extend({
   maxSelection: null,
   selection: null,
 
-  previousArrow: '◀',
-  nextArrow: '▶',
+  previousLabel: '◀',
+  nextLabel: '▶',
 
   titleFormat: '%B %Y',
   title: Ember.computed(function() {
@@ -18,26 +18,32 @@ Ember.Calendar = Ember.ContainerView.extend({
   tagName: 'table',
   classNames: ['ember-calendar'],
 
-  childViews: ['headerView', 'bodyView'],
+  childViews: ['captionView', 'headerView', 'bodyView'],
+
+  captionView: Ember.View.extend({
+    tagName: 'caption',
+    calendarBinding: 'parentView',
+    button: Ember.Button.extend({
+      tagName: 'span',
+      targetBinding: 'parentView.calendar'
+    }),
+    template: Ember.Handlebars.compile(
+      '{{view button titleBinding="calendar.previousLabel" action="decrementMonth"}}'+
+      '{{calendar.title}}'+
+      '{{view button titleBinding="calendar.nextLabel" action="incrementMonth"}}'
+    )
+  }),
 
   headerView: Ember.ContainerView.extend({
     tagName: 'thead',
-    childViews: ['captionView', 'daysOfWeekView'],
-    captionView: Ember.View.extend({
-      tagName: 'caption',
-      calendarBinding: 'parentView.parentView',
-      button: Ember.Button.extend({
-        tagName: 'span',
-        targetBinding: 'parentView.calendar'
-      }),
-      template: Ember.Handlebars.compile('{{view button titleBinding="calendar.previousArrow" action="decrementMonth"}}{{calendar.title}}{{view button titleBinding="calendar.nextArrow" action="incrementMonth"}}')
-    }),
+    childViews: ['daysOfWeekView'],
     daysOfWeekView: Ember.CollectionView.extend({
       tagName: 'tr',
       contentBinding: 'parentView.parentView.daysOfweek',
-      itemViewClass: Ember.View.extend({
+      itemViewClass: Ember.View.extend(Ember.TitleSupport, Ember.TitleRenderSupport, {
         tagName: 'th',
-        template: Ember.Handlebars.compile('{{content}}')
+        localize: false,
+        titleBinding: 'content'
       })
     })
   }),
@@ -47,16 +53,16 @@ Ember.Calendar = Ember.ContainerView.extend({
     contentBinding: 'parentView.weeks',
     itemViewClass: Ember.CollectionView.extend({
       tagName: 'tr',
-      classNames: ['ember-calendar-week'],
+      selectionBinding: 'parentView.parentView.selection',
       itemViewClass: Ember.Button.extend({
-        tagName: 'th',
+        tagName: 'td',
         disabledBinding: 'content.disabled',
         classNameBindings: ['disabled', 'content.notCurrentMonth', 'content.today', 'content.selected'],
         localize: false,
         titleBinding: 'content.value.day',
         target: '*',
         action: function() {
-          setPath(this, 'parentView.parentView.parentView.selection', getPath(this, 'content.value'));
+          setPath(this, 'collectionView.selection', getPath(this, 'content.value'));
         }
       })
     })
@@ -78,12 +84,7 @@ Ember.Calendar = Ember.ContainerView.extend({
       firstVisibleDay = get(this, 'firstVisibleDay'),
       day = firstVisibleDay.copy(),
       selection = get(this, 'selection'),
-      weeks = [], days, count = 0,
-      uid = this._uidForWeek(month, selection, get(this, 'maxSelection'), get(this, 'minSelection'));
-
-    if (this._weeks[uid]) {
-      return this._weeks[uid];
-    }
+      weeks = [], days, count = 0;
 
     for (i = 0; i < 42; ++i) {
       if (count === 7) { count = 0; }
@@ -102,14 +103,8 @@ Ember.Calendar = Ember.ContainerView.extend({
       day = day.advance({day: 1});
       count++;
     }
-    this._weeks[uid] = weeks;
     return weeks;
   }).property('month', 'minSelection', 'maxSelection', 'selection').cacheable(),
-
-  _weeks: {},
-  _uidForWeek: function(month, selection, minSelection, maxSelection) {
-    return "%@%@%@%@".fmt(month, selection, minSelection, maxSelection);
-  },
 
   canSelect: function(day) {
     var minSelection = get(this, 'minSelection'),

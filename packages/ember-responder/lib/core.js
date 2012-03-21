@@ -14,25 +14,21 @@ Ember.responder = Ember.Object.create({
       this.resignFirstResponder(currentResponder);
     }
 
-    view.willBecameFirstResponder();
+    view.fire('willBecameFirstResponder');
     set(this, 'firstResponder', view);
 
     view.focus();
-    view.didBecomeFirstResponder();
-
-    Ember.Logger.log('becomeFirstResponder');
+    view.fire('didBecomeFirstResponder');
   },
 
   resignFirstResponder: function(view) {
     if (!get(view, 'isFirstResponder')) { return; }
 
-    view.willLoseFirstResponder();
+    view.fire('willLoseFirstResponder');
     set(this, 'firstResponder', null);
 
     view.blur();
-    view.didLoseFirstResponder();
-
-    Ember.Logger.log('resignFirstResponder');
+    view.fire('didLoseFirstResponder');
   },
 
   goToNextResponder: function(view, backward) {

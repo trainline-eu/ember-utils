@@ -11,7 +11,9 @@ Ember.TitleSupport = Ember.Mixin.create({
   formattedTitle: Ember.computed(function() {
     var title = get(this, 'title');
     if (!Ember.empty(title)) {
-      title = String(title);
+      if (!(title instanceof Ember.Handlebars.SafeString)) {
+        title = String(title);
+      }
       if (get(this, 'localize')) {
         title = Ember.String.loc(title, get(this, 'localizeOptions') || {});
       }
@@ -32,6 +34,8 @@ Ember.TitleRenderSupport = Ember.Mixin.create({
     }
   },
   titleDidChange: Ember.observer(function() {
-    this.rerender();
+    if (get(this, 'state') === 'inDOM') {
+      this.rerender();
+    }
   }, 'formattedTitle')
 });

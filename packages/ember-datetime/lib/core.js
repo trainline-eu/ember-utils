@@ -141,14 +141,14 @@ var Scanner = Ember.Object.extend({
 
     @param {String} str The string to skip
     @throws {Ember.SCANNER_SKIP_ERROR} If the given string could not be scanned
-    @returns {Boolean} YES if the given string was successfully scanned, NO otherwise
+    @returns {Boolean} true if the given string was successfully scanned, false otherwise
   */
   skipString: function(str) {
     if (this.scan(str.length) !== str) {
       throw new Error(Ember.SCANNER_SKIP_ERROR);
     }
 
-    return YES;
+    return true;
   },
 
   /**
@@ -385,7 +385,7 @@ Ember.DateTime = Ember.Object.extend(Ember.Freezable, Ember.Copyable,
   },
 
   /**
-    Returns `YES` if the passed `Ember.DateTime` is equal to the receiver, ie: if their
+    Returns `true` if the passed `Ember.DateTime` is equal to the receiver, ie: if their
     number of milliseconds since January, 1st 1970 00:00:00.0 UTC are equal.
     This is the preferred method for testing equality.
 
@@ -761,7 +761,7 @@ Ember.DateTime.reopenClass(Ember.Comparable,
     // new value if there is one.
     tz = (opts.timezone !== undefined) ? opts.timezone : timezone; // watch out for zero, which is acceptable as a time zone
 
-    return this._adjust(opts, start, tz, NO);
+    return this._adjust(opts, start, tz, false);
   },
 
   /*
@@ -797,7 +797,7 @@ Ember.DateTime.reopenClass(Ember.Comparable,
 
     // the time options (hour, minute, sec, millisecond)
     // reset cascadingly (see documentation)
-    if (resetCascadingly === undefined || resetCascadingly === YES) {
+    if (resetCascadingly === undefined || resetCascadingly === true) {
       if (!Ember.none(opts.hour) && Ember.none(opts.minute)) {
         opts.minute = 0;
       }
