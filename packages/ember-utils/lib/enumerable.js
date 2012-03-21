@@ -69,6 +69,48 @@ var EnumerableExt = Ember.Mixin.create({
       ret.push(grouped[keyValues[idx]]);
     }
     return ret;
+  },
+
+  /**
+    Finds and returns the highest value of a given property in an enumerable.
+
+    @param {String} key
+      The property for which we want the largest value.
+
+    @param {Number} start
+      Optional minimum value. It's the value that will be returned if no higher value is found.
+
+    @returns {Number}
+      The highest value for the given property.
+  */
+  maxProperty: function(key, start) {
+    var value;
+    start = start || -Infinity;
+    return this.reduce(function(previousValue, item, index, enumerable) {
+      value = get(item, key);
+      return (value > previousValue) ? value : previousValue;
+    }, start);
+  },
+
+  /**
+    Finds and returns the lowest value of a given property in an enumerable.
+
+    @param {String} key
+      The property for which we want the lowest value.
+
+    @param {Number} start
+      Optional minimum value. It's the value that will be returned if no lower value is found.
+
+    @returns {Number}
+      The lowest value for the given property.
+  */
+  minProperty: function(key, start) {
+    var value;
+    start = start || +Infinity;
+    return this.reduce(function(previousValue, item, index, enumerable) {
+      value = get(item, key);
+      return (value < previousValue) ? value : previousValue;
+    }, start);
   }
 });
 
