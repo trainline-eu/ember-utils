@@ -4,6 +4,10 @@ var get = Ember.get;
 
 Ember.Validator.Number = Ember.Validator.extend({
 
+  toString: function() {
+    return 'Ember.Validator.Number';
+  },
+
   validate: function(form, field) {
     var value = get(field, 'value');
     return (value === '') || !(isNaN(value) || isNaN(parseFloat(value)));

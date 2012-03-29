@@ -4,6 +4,10 @@ var get = Ember.get;
 
 Ember.Validator.Required = Ember.Validator.extend({
 
+  toString: function() {
+    return 'Ember.Validator.Required';
+  },
+
   validate: function(form, field) {
     var value = get(field, 'value');
     if (typeof value === 'string') {
@@ -15,6 +19,10 @@ Ember.Validator.Required = Ember.Validator.extend({
 });
 
 Ember.Validator.True = Ember.Validator.extend({
+
+  toString: function() {
+    return 'Ember.Validator.True';
+  },
 
   validate: function(form, field) {
     var value = get(field, 'value');

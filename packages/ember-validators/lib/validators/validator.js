@@ -37,7 +37,10 @@ Ember.Validator = Ember.Object.extend({
   detachFrom: Ember.K,
 
   name: Ember.computed(function() {
-    return this.toString().split('.').pop().decamelize();
+    var parts = this.toString().split(':').shift().split("."),
+        name = parts[parts.length - 1];
+
+    return name.replace(/([A-Z])/g, '_$1').toLowerCase().slice(1);
   }).property(),
 
   validateError: function(form, field) {

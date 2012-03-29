@@ -7,6 +7,10 @@ var guidFor = function(form, field) {
 
 Ember.Validator.Confirmation = Ember.Validator.extend({
 
+  toString: function() {
+    return 'Ember.Validator.Confirmation';
+  },
+
   attachTo: function(form, field) {
     var guid = guidFor(form, field);
     groups[guid] = groups[guid] || [];

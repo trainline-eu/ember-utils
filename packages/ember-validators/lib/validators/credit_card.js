@@ -4,6 +4,10 @@ var get = Ember.get;
 
 Ember.Validator.CreditCard = Ember.Validator.extend({
 
+  toString: function() {
+    return 'Ember.Validator.CreditCard';
+  },
+
   validate: function(form, field) {
     return this.checkNumber(get(field, 'value'));
   },

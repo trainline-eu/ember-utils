@@ -4,6 +4,10 @@ var get = Ember.get;
 
 Ember.Validator.Pattern = Ember.Validator.extend({
 
+  toString: function() {
+    return 'Ember.Validator.Pattern';
+  },
+
   validatePattern: '',
 
   validate: function(form, field) {

@@ -4,7 +4,11 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-var get = Ember.get, set = Ember.set;
+
+var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt;
+
+// The English day names used for the 'lastMonday', 'nextTuesday', etc., getters.
+var englishDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 /**
   Standard error thrown by `Ember.Scanner` when it runs out of bounds
@@ -13,7 +17,7 @@ var get = Ember.get, set = Ember.set;
   @constant
   @type Error
 */
-Ember.SCANNER_OUT_OF_BOUNDS_ERROR = "Out of bounds.";
+var SCANNER_OUT_OF_BOUNDS_ERROR = "Out of bounds.";
 
 /**
   Standard error thrown by `Ember.Scanner` when  you pass a value not an integer.
@@ -22,7 +26,7 @@ Ember.SCANNER_OUT_OF_BOUNDS_ERROR = "Out of bounds.";
   @constant
   @type Error
 */
-Ember.SCANNER_INT_ERROR = "Not an int.";
+var SCANNER_INT_ERROR = "Not an int.";
 
 /**
   Standard error thrown by `Ember.Scanner` when it cannot find a string to skip.
@@ -31,7 +35,7 @@ Ember.SCANNER_INT_ERROR = "Not an int.";
   @constant
   @type Error
 */
-Ember.SCANNER_SKIP_ERROR = "Did not find the string to skip.";
+var SCANNER_SKIP_ERROR = "Did not find the string to skip.";
 
 /**
   Standard error thrown by `Ember.Scanner` when it can any kind a string in the
@@ -41,7 +45,7 @@ Ember.SCANNER_SKIP_ERROR = "Did not find the string to skip.";
   @constant
   @type Error
 */
-Ember.SCANNER_SCAN_ARRAY_ERROR = "Did not find any string of the given array to scan.";
+var SCANNER_SCAN_ARRAY_ERROR = "Did not find any string of the given array to scan.";
 
 /**
   Standard error thrown when trying to compare two dates in different
@@ -51,7 +55,7 @@ Ember.SCANNER_SCAN_ARRAY_ERROR = "Did not find any string of the given array to 
   @constant
   @type Error
 */
-Ember.DATETIME_COMPAREDATE_TIMEZONE_ERROR = "Can't compare the dates of two DateTimes that don't have the same timezone.";
+var DATETIME_COMPAREDATE_TIMEZONE_ERROR = "Can't compare the dates of two DateTimes that don't have the same timezone.";
 
 /**
   Standard ISO8601 date format
@@ -104,12 +108,12 @@ var Scanner = Ember.Object.extend({
     accordingly.
 
     @param {Integer} len The amount of characters to read
-    @throws {Ember.SCANNER_OUT_OF_BOUNDS_ERROR} If asked to read too many characters
+    @throws {SCANNER_OUT_OF_BOUNDS_ERROR} If asked to read too many characters
     @returns {String} The characters
   */
   scan: function(len) {
     if (this.scanLocation + len > this.length) {
-      throw new Error(Ember.SCANNER_OUT_OF_BOUNDS_ERROR);
+      throw new Error(SCANNER_OUT_OF_BOUNDS_ERROR);
     }
     var str = this.string.substr(this.scanLocation, len);
     this.scanLocation += len;
@@ -121,7 +125,7 @@ var Scanner = Ember.Object.extend({
 
     @param {Integer} min_len The minimum amount of characters to read
     @param {Integer} [max_len] The maximum amount of characters to read (defaults to the minimum)
-    @throws {Ember.SCANNER_INT_ERROR} If asked to read non numeric characters
+    @throws {SCANNER_INT_ERROR} If asked to read non numeric characters
     @returns {Integer} The scanned integer
   */
   scanInt: function(min_len, max_len) {
@@ -129,7 +133,7 @@ var Scanner = Ember.Object.extend({
     var str = this.scan(max_len),
       re = new RegExp("^\\d{" + min_len + "," + max_len + "}"),
       match = str.match(re);
-    if (!match) throw new Error(Ember.SCANNER_INT_ERROR);
+    if (!match) throw new Error(SCANNER_INT_ERROR);
     if (match[0].length < max_len) {
       this.scanLocation += match[0].length - max_len;
     }
@@ -140,12 +144,12 @@ var Scanner = Ember.Object.extend({
     Attempts to skip a given string.
 
     @param {String} str The string to skip
-    @throws {Ember.SCANNER_SKIP_ERROR} If the given string could not be scanned
+    @throws {SCANNER_SKIP_ERROR} If the given string could not be scanned
     @returns {Boolean} true if the given string was successfully scanned, false otherwise
   */
   skipString: function(str) {
     if (this.scan(str.length) !== str) {
-      throw new Error(Ember.SCANNER_SKIP_ERROR);
+      throw new Error(SCANNER_SKIP_ERROR);
     }
 
     return true;
@@ -155,7 +159,7 @@ var Scanner = Ember.Object.extend({
     Attempts to scan any string in a given array.
 
     @param {Array} ary the array of strings to scan
-    @throws {Ember.SCANNER_SCAN_ARRAY_ERROR} If no string of the given array is found
+    @throws {SCANNER_SCAN_ARRAY_ERROR} If no string of the given array is found
     @returns {Integer} The index of the scanned string of the given array
   */
   scanArray: function(ary) {
@@ -165,7 +169,7 @@ var Scanner = Ember.Object.extend({
       }
       this.scanLocation -= ary[i].length;
     }
-    throw new Error(Ember.SCANNER_SCAN_ARRAY_ERROR);
+    throw new Error(SCANNER_SCAN_ARRAY_ERROR);
   }
 
 });
@@ -378,10 +382,7 @@ Ember.DateTime = Ember.Object.extend(Ember.Freezable, Ember.Copyable,
     @returns {String}
   */
   toString: function() {
-    return "UTC: " +
-           new Date(this._ms).toUTCString() +
-           ", timezone: " +
-           this.timezone;
+    return fmt("UTC: %@, timezone: %@", [new Date(this._ms).toUTCString(), this.timezone]);
   },
 
   /**
@@ -428,38 +429,13 @@ Ember.DateTime = Ember.Object.extend(Ember.Freezable, Ember.Copyable,
 
 });
 
-Ember.DateTime.reopenClass(Ember.Comparable,
-/** @scope Ember.DateTime */ {
-
-  /**
-    The default format (ISO 8601) in which DateTimes are stored in a record.
-    Change this value if your backend sends and receives dates in another
-    format.
-
-    This value can also be customized on a per-attribute basis with the format
-    property. For example:
-
-        Ember.Record.attr(Ember.DateTime, { format: '%d/%m/%Y %H:%M:%S' })
-
-    @type String
-    @default Ember.DATETIME_ISO8601
-  */
-  recordFormat: Ember.DATETIME_ISO8601,
+Ember.DateTime.reopenClass(Ember.Comparable, {
 
   /**
     @type Array
     @default ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   */
   dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-
-  /**
-    @private
-
-    The English day names used for the 'lastMonday', 'nextTuesday', etc., getters.
-
-    @type Array
-  */
-  _englishDayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 
   /**
     @type Array
@@ -627,7 +603,7 @@ Ember.DateTime.reopenClass(Ember.Comparable,
       suffix = key.slice(4);
       if (prefix === 'last' || prefix === 'next') {
         currentWeekday = this._get('dayOfWeek', start, timezone);
-        targetWeekday = this._englishDayNames.indexOf(suffix);
+        targetWeekday = englishDayNames.indexOf(suffix);
         if (targetWeekday >= 0) {
           delta = targetWeekday - currentWeekday;
           if (prefix === 'last' && delta >= 0) delta -= 7;
@@ -868,7 +844,8 @@ Ember.DateTime.reopenClass(Ember.Comparable,
       passed parameters, possibly fetched from cache
   */
   create: function() {
-    var arg = arguments.length === 0 ? {} : arguments[0], timezone;
+    var arg = arguments.length === 0 ? {} : arguments[0], timezone,
+        key, cache, ret, previousKey, idx, now;
 
     // if simply milliseconds since Jan 1, 1970 are given, just use those
     if (Ember.typeOf(arg) === 'number') {
@@ -884,10 +861,11 @@ Ember.DateTime.reopenClass(Ember.Comparable,
     if (!Ember.none(arg.milliseconds)) {
 
       // quick implementation of a FIFO set for the cache
-      var key = 'nu' + arg.milliseconds + timezone, cache = this._dt_cache;
-      var ret = cache[key];
+      key = 'nu' + arg.milliseconds + timezone;
+      cache = this._dt_cache;
+      ret = cache[key];
       if (!ret) {
-        var previousKey, idx = this._dt_cache_index;
+        idx = this._dt_cache_index;
         ret = cache[key] = this._super({ _ms: arg.milliseconds, timezone: timezone });
         idx = this._dt_cache_index = (idx + 1) % this._DT_CACHE_MAX_LENGTH;
         previousKey = cache[idx];
@@ -898,7 +876,7 @@ Ember.DateTime.reopenClass(Ember.Comparable,
     }
     // otherwise, convert what we have to milliseconds and try again
     else {
-      var now = new Date();
+      now = new Date();
 
       return this.create({ // recursive call with new arguments
         milliseconds: this._toMilliseconds(arg, now.getTime(), timezone, arg.resetCascadingly),
@@ -1014,7 +992,7 @@ Ember.DateTime.reopenClass(Ember.Comparable,
 
     d = this.create(opts);
 
-    if (!Ember.none(check.dayOfWeek) && get(d,'dayOfWeek') !== check.dayOfWeek) {
+    if (!Ember.none(check.dayOfWeek) && get(d, 'dayOfWeek') !== check.dayOfWeek) {
       return null;
     }
 
@@ -1136,12 +1114,12 @@ Ember.DateTime.reopenClass(Ember.Comparable,
     @returns {Integer} -1 if a < b,
                        +1 if a > b,
                        0 if a == b
-    @throws {Ember.DATETIME_COMPAREDATE_TIMEZONE_ERROR} if the passed arguments
+    @throws {DATETIME_COMPAREDATE_TIMEZONE_ERROR} if the passed arguments
       don't have the same timezone
   */
   compareDate: function(a, b) {
     if (get(a, 'timezone') !== get(b,'timezone')) {
-      throw new Error(Ember.DATETIME_COMPAREDATE_TIMEZONE_ERROR);
+      throw new Error(DATETIME_COMPAREDATE_TIMEZONE_ERROR);
     }
 
     var ma = get(a.adjust({hour: 0}), 'milliseconds'),
