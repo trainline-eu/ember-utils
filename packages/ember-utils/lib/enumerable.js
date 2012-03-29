@@ -73,6 +73,7 @@ var EnumerableExt = Ember.Mixin.create({
 
   /**
     Finds and returns the highest value of a given property in an enumerable.
+    Ex: [{age: 7}, {age: 77}].maxProperty('age'); // = 77
 
     @param {String} key
       The property for which we want the largest value.
@@ -94,6 +95,7 @@ var EnumerableExt = Ember.Mixin.create({
 
   /**
     Finds and returns the lowest value of a given property in an enumerable.
+    Ex: [{age: 7}, {age: 77}].minProperty('age'); // = 7
 
     @param {String} key
       The property for which we want the lowest value.
@@ -111,6 +113,24 @@ var EnumerableExt = Ember.Mixin.create({
       value = get(item, key);
       return (value < previousValue) ? value : previousValue;
     }, start);
+  },
+
+  /**
+    Computes the sum of a given property in an enumerable.
+    Ex: [{age: 7}, {age: 77}].sumProperty('age'); // = 84
+
+    @param {String} key
+      The property we want the sum of.
+
+    @returns {Number}
+      The sum of the given property.
+  */
+  sumProperty: function(key) {
+    var value;
+    return this.reduce(function(previousValue, item, index, enumerable) {
+      value = get(item, key);
+      return value + previousValue;
+    }, 0);
   }
 });
 
