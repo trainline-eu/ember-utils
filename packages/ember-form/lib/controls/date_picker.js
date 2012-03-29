@@ -1,4 +1,4 @@
-var get = Ember.get, set = Ember.set, getPath = Ember.getPath, setPath = Ember.setPath;
+var get = Ember.get, set = Ember.set, getPath = Ember.getPath, setPath = Ember.setPath, fmt = Ember.String.fmt;
 
 var dateProperty = function(key, value) {
   if (!Ember.none(value)) {
@@ -10,7 +10,7 @@ var dateProperty = function(key, value) {
   return value;
 };
 
-Ember.DatePicker = Em.ContainerView.extend({
+Ember.DatePicker = Ember.ContainerView.extend({
   classNames: ['ember-date-picker'],
 
   value: null,
@@ -19,43 +19,43 @@ Ember.DatePicker = Em.ContainerView.extend({
   month: null,
   year: null,
 
-  _day: function(key, value) {
+  _day: Ember.computed(function(key, value) {
     return dateProperty.call(this, 'day', value);
-  }.property('day', 'value.day').cacheable(),
+  }).property('day', 'value.day').cacheable(),
 
-  _month: function(key, value) {
+  _month: Ember.computed(function(key, value) {
     return dateProperty.call(this, 'month', value);
-  }.property('month', 'value.month').cacheable(),
+  }).property('month', 'value.month').cacheable(),
 
-  _year: function(key, value) {
+  _year: Ember.computed(function(key, value) {
     return dateProperty.call(this, 'year', value);
-  }.property('year', 'value.year').cacheable(),
+  }).property('year', 'value.year').cacheable(),
 
   getPart: function(key) {
     var date = get(this, key);
-    return date ? date : getPath(this, 'value.%@'.fmt(key));
+    return date ? date : getPath(this, fmt('value.%@', [key]));
   },
 
-  dateDidChange: function() {
+  dateDidChange: Ember.observer(function() {
     var date;
     if (this.get('isComplete')) {
       set(this, 'value', Ember.DateTime.create(this.getProperties('day', 'month', 'year')));
     } else {
       set(this, 'value', null);
     }
-  }.observes('day', 'month', 'year'),
+  }, 'day', 'month', 'year'),
 
-  valueDidChange: function() {
+  valueDidChange: Ember.observer(function() {
     if (!get(this, 'value')) {
       this.setProperties({ day: null, month: null, year: null });
     }
-  }.observes('value'),
+  }, 'value'),
 
-  isComplete: function() {
+  isComplete: Ember.computed(function() {
     return this.get('childViews').getEach('name').every(function(key) {
       return !Ember.empty(this.getPart(key));
     }, this);
-  }.property('day', 'month', 'year').cacheable(),
+  }).property('day', 'month', 'year').cacheable(),
 
   childViews: ['dayView', 'monthView', 'yearView'],
   dayView: Ember.Select.extend({
@@ -89,18 +89,18 @@ Ember.DatePicker = Em.ContainerView.extend({
   years: Ember.computed(function() {
     var i, array = [], format = get(this, 'yearFormat') || '%Y',
         yearStart = get(this, 'yearStart') || 0, yearEnd = get(this, 'yearEnd') || '-100',
-      year = Em.DateTime.create().get('year'), start = year + parseInt(yearStart, 10), end = year + parseInt(yearEnd, 10);
+      year = Ember.DateTime.create().get('year'), start = year + parseInt(yearStart, 10), end = year + parseInt(yearEnd, 10);
     if (start >=  end) {
       for (i = start; i > end; i--) {
         array.push({
-          label: Em.DateTime.create({year:i}).toFormattedString(format),
+          label: Ember.DateTime.create({year:i}).toFormattedString(format),
           value: i
         });
       }
     } else {
       for (i = start; i < end; i++) {
         array.push({
-          label: Em.DateTime.create({year:i}).toFormattedString(format),
+          label: Ember.DateTime.create({year:i}).toFormattedString(format),
           value: i
         });
       }
@@ -112,7 +112,7 @@ Ember.DatePicker = Em.ContainerView.extend({
     var i, array = [], format = get(this, 'monthFormat') || '%B';
     for (i = 1; i < 13; i++) {
       array.push({
-        label: Em.DateTime.create({month:i}).toFormattedString(format),
+        label: Ember.DateTime.create({month:i}).toFormattedString(format),
         value: i
       });
     }
@@ -123,7 +123,7 @@ Ember.DatePicker = Em.ContainerView.extend({
     var i, array = [], format = get(this, 'dayFormat') || '%d';
     for (i = 1; i < 32; i++) {
       array.push({
-        label: Em.DateTime.create({day:i}).toFormattedString(format),
+        label: Ember.DateTime.create({day:i}).toFormattedString(format),
         value: i
       });
     }

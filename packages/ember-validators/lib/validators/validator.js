@@ -32,10 +32,13 @@ var fmt = Ember.String.fmt, classify = Ember.String.classify;
 
 Ember.Validator = Ember.Object.extend({
 
-  name: 'validation',
   errorMessage: 'Validation Error : (%@)',
   attachTo: Ember.K,
   detachFrom: Ember.K,
+
+  name: Ember.computed(function() {
+    return this.toString().split('.').pop().decamelize();
+  }).property(),
 
   validateError: function(form, field) {
     var name = get(this, 'name'),
@@ -79,7 +82,7 @@ Ember.Validator.reopenClass({
 
   ERROR: 2,
 
-  findFor: function(form, field, validatorKey) {
+  findFor: function(validatorKey) {
     if (!validatorKey) { return; }
 
     if (typeof validatorKey  === 'string') {

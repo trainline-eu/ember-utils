@@ -6,7 +6,6 @@ var guidFor = function(form, field) {
 };
 
 Ember.Validator.Confirmation = Ember.Validator.extend({
-  name: 'confirmation',
 
   attachTo: function(form, field) {
     var guid = guidFor(form, field);

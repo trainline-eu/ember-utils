@@ -1,5 +1,3 @@
-require('ember-orientation/ios-orientationchange-fix');
-
 var win = $(window), lastOrientation;
 var get = Ember.get;
 

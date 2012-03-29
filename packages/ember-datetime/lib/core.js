@@ -1175,7 +1175,7 @@ if ('DS' in window) {
 
       if (type === "string" || type === "number") {
         return Ember.DateTime.parse(serialized, DS.attr.transforms.datetime.format);
-      } else if (Em.none(serialized)) {
+      } else if (Ember.none(serialized)) {
         return serialized;
       } else {
         return null;

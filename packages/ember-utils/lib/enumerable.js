@@ -35,8 +35,8 @@ var EnumerableExt = Ember.Mixin.create({
 
       for(idx=0; ret===0 && idx<len; idx++) {
         key = keys[idx];
-        aValue = a ? Em.get(a, key) : null;
-        bValue = b ? Em.get(b, key) : null;
+        aValue = a ? Ember.get(a, key) : null;
+        bValue = b ? Ember.get(b, key) : null;
         ret = Ember.compare(aValue, bValue);
       }
       return ret;

@@ -78,29 +78,29 @@ Ember.history = Ember.Object.create({
     get(this, 'stateManager').goToState(this.stateFor(path));
   },
 
-  uri: function() {
+  uri: Ember.computed(function() {
     return new URI(History.getState().url);
-  }.property(),
+  }).property(),
 
-  path: function() {
+  path: Ember.computed(function() {
     return cleanPath(get(this, 'uri').path());
-  }.property('uri'),
+  }).property('uri'),
 
-  params: function() {
+  params: Ember.computed(function() {
     return get(this, 'uri').search(true);
-  }.property('uri'),
+  }).property('uri'),
 
-  state: function() {
+  state: Ember.computed(function() {
     return this.stateFor(get(this, 'path'));
-  }.property('uri'),
+  }).property('uri'),
 
-  location: function(key, value) {
+  location: Ember.computed(function(key, value) {
     if (value !== undefined) {
       this.setLocation(value);
     } else {
       return this.get('path');
     }
-  }.property('uri'),
+  }).property('uri'),
 
   _pushState: function(data, title, url, replace) {
     url = fmt('/%@', [url]);

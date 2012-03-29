@@ -43,7 +43,7 @@ Ember.FilePicker = Ember.Button.extend({
     })
       .attr('multiple', get(this, 'multiple'))
       .attr('disabled', get(this, 'disabled'))
-      .on('change', $.proxy(this, 'didChangeFiles'));
+      .on('change', Ember.$.proxy(this, 'didChangeFiles'));
   },
   didChangeFiles: function(evt) {
     var files = Ember.A(evt.currentTarget.files);

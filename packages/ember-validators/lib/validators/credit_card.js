@@ -3,7 +3,7 @@ require('ember-validators/validators/validator');
 var get = Ember.get;
 
 Ember.Validator.CreditCard = Ember.Validator.extend({
-  name: 'creditCard',
+
   validate: function(form, field) {
     return this.checkNumber(get(field, 'value'));
   },
@@ -35,7 +35,7 @@ Ember.Validator.CreditCard = Ember.Validator.extend({
     // Determine if the ccNumb is in fact all numbers
     for (j=0; j<len; j++) {
       temp = '' + sCCN.substring(j, j+1);
-      if (valid.indexOf(temp) == "-1") { bNum = false; }
+      if (valid.indexOf(temp) === -1) { bNum = false; }
     }
 
     // if it is NOT a number, you can either alert to the fact,

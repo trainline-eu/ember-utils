@@ -1,0 +1,10 @@
+require("ember-form/controls/button");
+require("ember-form/controls/calendar");
+require("ember-form/controls/checkbox");
+require("ember-form/controls/date_picker");
+require("ember-form/controls/filepicker");
+require("ember-form/controls/form");
+require("ember-form/controls/label");
+require("ember-form/controls/progress");
+require("ember-form/controls/select");
+require("ember-form/controls/text_field");

@@ -1,136 +1,80 @@
-abort "Please use Ruby 1.9 to build Copal.js!" if RUBY_VERSION !~ /^1\.9/
+abort "Please use Ruby 1.9 to build Ember.js!" if RUBY_VERSION !~ /^1\.9/
 
 require "bundler/setup"
 require "erb"
-require "uglifier"
+require 'rake-pipeline'
+require "ember_docs/cli"
+require "colored"
 
-# for now, the SproutCore compiler will be used to compile Ember.js
-require "sproutcore"
+def pipeline
+  Rake::Pipeline::Project.new("Assetfile")
+end
 
-LICENSE = File.read("generators/license.js")
-
-## Some Ember modules expect an exports object to exist. Mock it out.
-
-module SproutCore
-  module Compiler
-    class Entry
-      def body
-        "\n(function(exports) {\n#{@raw_body}\n})({});\n"
-      end
+desc "Strip trailing whitespace for JavaScript files in packages"
+task :strip_whitespace do
+  Dir["packages/**/*.js"].each do |name|
+    body = File.read(name)
+    File.open(name, "w") do |file|
+      file.write body.gsub(/ +\n/, "\n")
     end
   end
 end
 
-## HELPERS ##
-
-def strip_require(file)
-  result = File.read(file)
-  result.gsub!(%r{^\s*require\(['"]([^'"])*['"]\);?\s*}, "")
-  result
+desc "Build ember-addons.js"
+task :dist do
+  puts "Building Ember Addons..."
+  pipeline.invoke
+  puts "Done"
 end
-
-def strip_ember_assert(file)
-  result = File.read(file)
-  result.gsub!(%r{^(\s)+ember_assert\((.*)\).*$}, "")
-  result
-end
-
-def uglify(file)
-  uglified = Uglifier.compile(File.read(file))
-  "#{LICENSE}\n#{uglified}"
-end
-
-# Set up the intermediate and output directories for the interim build process
-
-SproutCore::Compiler.intermediate = "tmp/intermediate"
-SproutCore::Compiler.output       = "tmp/static"
-
-# Create a compile task for an Ember package. This task will compute
-# dependencies and output a single JS file for a package.
-def compile_package_task(input, output=input)
-  js_tasks = SproutCore::Compiler::Preprocessors::JavaScriptTask.with_input "packages/#{input}/lib/**/*.js", "."
-  SproutCore::Compiler::CombineTask.with_tasks js_tasks, "#{SproutCore::Compiler.intermediate}/#{output}"
-end
-
-## TASKS ##
-
-# Create ember:package tasks for each of the Ember packages
-namespace :ember do
-  %w(animations browser datetime form geolocation history markdown
-    orientation overlay objectproxy responder routing searchable utils validators).each do |package|
-    task package => compile_package_task("ember-#{package}", "ember-#{package}")
-  end
-end
-
-# Create a build task that depends on all of the package dependencies
-task :build => ["ember:animations", "ember:browser", "ember:datetime", "ember:form", "ember:geolocation",
-  "ember:history", "ember:markdown", "ember:orientation", "ember:overlay",
-  "ember:objectproxy", "ember:responder", "ember:routing", "ember:searchable", "ember:utils", "ember:validators"]
-
-distributions = {
-  "ember-animations" => ["ember-animations"],
-  "ember-browser" => ["ember-browser"],
-  "ember-datetime" => ["ember-datetime"],
-  "ember-form" => ["ember-form"],
-  "ember-geolocation" => ["ember-geolocation"],
-  "ember-history" => ["ember-history"],
-  "ember-markdown" => ["ember-markdown"],
-  "ember-orientation" => ["ember-orientation"],
-  "ember-overlay" => ["ember-overlay"],
-  "ember-objectproxy" => ["ember-objectproxy"],
-  "ember-responder" => ["ember-responder"],
-  "ember-routing" => ["ember-routing"],
-  "ember-searchable" => ["ember-searchable"],
-  "ember-utils" => ["ember-utils"],
-  "ember-validators" => ["ember-validators"]
-}
-
-distributions.each do |name, libraries|
-  # Strip out require lines. For the interim, requires are
-  # precomputed by the compiler so they are no longer necessary at runtime.
-  file "dist/#{name}.js" => :build do
-    puts "Generating #{name}.js"
-
-    mkdir_p "dist"
-
-    File.open("dist/#{name}.js", "w") do |file|
-      libraries.each do |library|
-        file.puts strip_require("tmp/static/#{library}.js")
-      end
-    end
-  end
-
-  # Minified distribution
-  file "dist/#{name}.min.js" => "dist/#{name}.js" do
-    require 'zlib'
-
-    print "Generating #{name}.min.js... "
-    STDOUT.flush
-
-    File.open("dist/#{name}.prod.js", "w") do |file|
-      file.puts strip_ember_assert("dist/#{name}.js")
-    end
-
-    minified_code = uglify("dist/#{name}.prod.js")
-    File.open("dist/#{name}.min.js", "w") do |file|
-      file.puts minified_code
-    end
-
-    gzipped_kb = Zlib::Deflate.deflate(minified_code).bytes.count / 1024
-
-    puts "#{gzipped_kb} KB gzipped"
-
-    rm "dist/#{name}.prod.js"
-  end
-end
-
-
-desc "Build Ember.js"
-task :dist => distributions.keys.map {|name| "dist/#{name}.min.js"}
 
 desc "Clean build artifacts from previous builds"
 task :clean do
-  sh "rm -rf tmp && rm -rf dist"
+  puts "Cleaning build..."
+  pipeline.clean
+  puts "Done"
+end
+
+desc "Run tests with phantomjs"
+task :test, [:suite] => :dist do |t, args|
+  unless system("which phantomjs > /dev/null 2>&1")
+    abort "PhantomJS is not installed. Download from http://phantomjs.org"
+  end
+
+  suites = {
+    :default => ["package=all"],
+    :all => ["package=all",
+              "package=all&jquery=1.6.4&nojshint=true",
+              "package=all&extendprototypes=true&nojshint=true",
+              "package=all&extendprototypes=true&jquery=1.6.4&nojshint=true",
+              "package=all&dist=build&nojshint=true"]
+  }
+
+  suite = args[:suite] || :default
+  opts = suites[suite.to_sym]
+
+  unless opts
+    abort "No suite named: #{suite}"
+  end
+
+  cmd = opts.map do |opt|
+    "phantomjs tests/qunit/run-qunit.js \"file://localhost#{File.dirname(__FILE__)}/tests/index.html?#{opt}\""
+  end.join(' && ')
+
+  # Run the tests
+  puts "Running: #{opts.join(", ")}"
+  success = system(cmd)
+
+  if success
+    puts "Tests Passed".green
+  else
+    puts "Tests Failed".red
+    exit(1)
+  end
+end
+
+desc "Automatically run tests (Mac OS X only)"
+task :autotest do
+  system("kicker -e 'rake test' packages")
 end
 
 task :default => :dist

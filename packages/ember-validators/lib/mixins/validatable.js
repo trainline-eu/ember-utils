@@ -2,10 +2,10 @@ require('ember-validators/validators/validator');
 
 var get = Ember.get, set = Ember.set;
 
-var oldFilter = jQuery.event.keyHooks.filter;
-jQuery.event.keyHooks.filter = function(evt, original) {
+var oldFilter = Ember.$.event.keyHooks.filter;
+Ember.$.event.keyHooks.filter = function(evt, original) {
   evt = oldFilter(evt, original);
-  if (jQuery.browser.msie && (evt.which == 8 || evt.which == 9 || (evt.which >= 37 && evt.which <= 40))) {
+  if (Ember.$.browser.msie && (evt.which === 8 || evt.which === 9 || (evt.which >= 37 && evt.which <= 40))) {
     evt.charString = String.fromCharCode(0);
   } else {
     evt.charString = (evt.which > 0) ? String.fromCharCode(evt.which) : null;
@@ -26,7 +26,7 @@ Ember.Validatable = Ember.Mixin.create({
     set(this, 'validators', validators);
 
     validators = validators.map(function(validatorName, idx) {
-      return Ember.Validator.findFor(form, this, validatorName);
+      return Ember.Validator.findFor(validatorName);
     }, this).without();
 
     set(this, 'validatorObjects', Ember.A(validators));

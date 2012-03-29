@@ -33,14 +33,14 @@ function timeShouldBeEqualToHash(t, h, message) {
     return;
   }
     
-  equals(get(t, 'year'), h.year , Ember.String.fmt(message, ['year']));
-  equals(get(t, 'month'), h.month, Ember.String.fmt(message, ['month']));
-  equals(get(t, 'day'), h.day, Ember.String.fmt(message, ['day']));
-  equals(get(t, 'hour'), h.hour, Ember.String.fmt(message, ['hour']));
-  equals(get(t, 'minute'), h.minute, Ember.String.fmt(message, ['minute']));
-  equals(get(t, 'second'), h.second, Ember.String.fmt(message, ['second']));
-  equals(get(t, 'millisecond'), h.millisecond, Ember.String.fmt(message, ['millisecond']));
-  equals(get(t, 'timezone'), h.timezone, Ember.String.fmt(message, ['timezone']));
+  equal(get(t, 'year'), h.year , Ember.String.fmt(message, ['year']));
+  equal(get(t, 'month'), h.month, Ember.String.fmt(message, ['month']));
+  equal(get(t, 'day'), h.day, Ember.String.fmt(message, ['day']));
+  equal(get(t, 'hour'), h.hour, Ember.String.fmt(message, ['hour']));
+  equal(get(t, 'minute'), h.minute, Ember.String.fmt(message, ['minute']));
+  equal(get(t, 'second'), h.second, Ember.String.fmt(message, ['second']));
+  equal(get(t, 'millisecond'), h.millisecond, Ember.String.fmt(message, ['millisecond']));
+  equal(get(t, 'timezone'), h.timezone, Ember.String.fmt(message, ['timezone']));
 }
 
 function formatTimezone(offset) {
@@ -60,29 +60,29 @@ test('_toMilliseconds()', function() {
   startTime = 1264958583000; // Sun, 31 Jan 2010 17:23:03 GMT (a randomly chosen time with which to re-init the internal date object for more robustness)
 
   // Check the default behavior
-  equals(dt._toMilliseconds(null, ms, timezone), ms, "Should equal start milliseconds when no options hash provided");
-  equals(dt._toMilliseconds({}, ms, timezone), ms, "Should equal start milliseconds when empty options hash provided");
+  equal(dt._toMilliseconds(null, ms, timezone), ms, "Should equal start milliseconds when no options hash provided");
+  equal(dt._toMilliseconds({}, ms, timezone), ms, "Should equal start milliseconds when empty options hash provided");
   
   // Test a completely defined date/time hash with no specified start milliseconds.
-  equals(dt._toMilliseconds(options, null, options.timezone), ms, "Milliseconds should express the parsed options hash");
+  equal(dt._toMilliseconds(options, null, options.timezone), ms, "Milliseconds should express the parsed options hash");
 
   // Now specify the same time in timezone (+60), one hour west of the prime meridian.
   // Pass in 'startTime' to force a reset of the internal date object so we can be sure we're not
   // succeeding because of old values.
   options.hour = originalHour - 1;
-  equals(dt._toMilliseconds(options, startTime, options.timezone + 60), ms, "Should get same milliseconds when expressing time in westerly time zone");
+  equal(dt._toMilliseconds(options, startTime, options.timezone + 60), ms, "Should get same milliseconds when expressing time in westerly time zone");
 
   // Now specify the same time in timezone (-60), one hour east of the prime meridian
   options.hour = originalHour + 1;
-  equals(dt._toMilliseconds(options, startTime, options.timezone - 60), ms, "Should get same milliseconds when expressing time in easterly time zone");
+  equal(dt._toMilliseconds(options, startTime, options.timezone - 60), ms, "Should get same milliseconds when expressing time in easterly time zone");
 
   // Now start at the original 1985 time, but modify only the hour as specified in time zone 60.
   options = { hour: originalHour - 1 };
-  equals(dt._toMilliseconds(options, ms, originalTimezone + 60, NO), ms, "Should get same result modifying only the hour as expressed in westerly time zone");
+  equal(dt._toMilliseconds(options, ms, originalTimezone + 60, false), ms, "Should get same result modifying only the hour as expressed in westerly time zone");
 
   // Now do the same thing the other way
   options = { hour: originalHour + 1 };
-  equals(dt._toMilliseconds(options, ms, originalTimezone - 60, NO), ms, "Should get same result modifying only the hour as expressed in westerly time zone");
+  equal(dt._toMilliseconds(options, ms, originalTimezone - 60, false), ms, "Should get same result modifying only the hour as expressed in westerly time zone");
 });
 
 test('create with a hash', function() {
@@ -106,7 +106,7 @@ test('create with local time milliseconds', function() {
   timeShouldBeEqualToHash(dt, hash);
 
   // Now try creating with 0 milliseconds
-  equals(get(Ember.DateTime.create(0), 'milliseconds'), 0, "Can create with 0 milliseconds");
+  equal(get(Ember.DateTime.create(0), 'milliseconds'), 0, "Can create with 0 milliseconds");
 });
 
 test('create with default time zone', function() {
@@ -115,7 +115,7 @@ test('create with default time zone', function() {
   // Check that the default creation time zone is local
   timezone = d.getTimezoneOffset(); // get the current location's time zone.
   dt = Ember.DateTime.create();
-  equals(get(dt, 'timezone'), timezone, "Default time zone should be local");
+  equal(get(dt, 'timezone'), timezone, "Default time zone should be local");
 });
 
 test('create with a hash containing milliseconds and a specified time zone', function() {
@@ -138,7 +138,7 @@ test('create with default time zone', function() {
   // Check that the default creation time zone is local
   timezone = d.getTimezoneOffset(); // get the current location's time zone.
   dt = Ember.DateTime.create();
-  equals(get(dt, 'timezone'), timezone, "Default time zone should be local");
+  equal(get(dt, 'timezone'), timezone, "Default time zone should be local");
 });
 
 test('create with a hash containing milliseconds and a specified time zone', function() {
@@ -168,7 +168,7 @@ test('Adjust with hashes expressed in various time zones', function() {
     // Test taking each to time zone 0.  Manually calculate what the hour should be
     // then test that a call to get() returns that value.
     newHour = Math.floor((options.hour + 48 + (timezone / 60)) % 24); // small hack -- add 48 hours to ensure positive results when adding negative time zone offsets (doesn't affect the calculation since we mod by 24)
-    equals(get(dt.adjust({ timezone: 0 }), 'hour'), newHour);
+    equal(get(dt.adjust({ timezone: 0 }), 'hour'), newHour);
   });
 });
 
@@ -193,7 +193,7 @@ test('advance', function() {
   timeShouldBeEqualToHash(t, h);
   timeShouldBeEqualToHash(t.advance({ timezone: 120 }), { year: 1985, month: 5, day: 7, hour: 23, minute: 0, second: 22, millisecond: 925, timezone: 0 });
   timeShouldBeEqualToHash(t.advance({ timezone: 120 }).advance({ timezone: -330 }), { year: 1985, month: 5, day: 8, hour: 4, minute: 30, second: 22, millisecond: 925, timezone: -330 });
-  equals(Ember.DateTime.compare(
+  equal(Ember.DateTime.compare(
     t.advance({ timezone: 120 }).advance({ timezone: -330 }),
     t.advance({ timezone: -210 })),
     0);
@@ -202,23 +202,23 @@ test('advance', function() {
 test('compare', function() {
   var exception = null;
   
-  equals(Ember.DateTime.isComparable, YES, "Ember.DateTime is comparable");
-  equals(Ember.compare(dt, dt), 0, "A DateTime instance is equal to itself via compare()");
-  equals(dt.isEqual(dt), YES, "A DateTime instance is equal to itself via isEqual()");
-  equals(dt.advance({hour: 1}).isEqual(dt), NO);
-  equals(Ember.compare(dt, dt.advance({hour: 1})), -1);
-  equals(Ember.compare(dt.advance({hour: 1}), dt), 1);
-  equals(Ember.DateTime.compareDate(dt, dt.advance({hour: 1})), 0);
-  equals(Ember.DateTime.compareDate(dt, dt.adjust({hour: 0}).advance({day: 1, second: -1})), 0);
-  equals(Ember.DateTime.compareDate(dt, dt.adjust({hour: 0}).advance({day: 1})), -1);
-  equals(Ember.DateTime.compareDate(dt, dt.advance({day: 1})), -1);
-  equals(Ember.compare(
+  equal(Ember.DateTime.isComparable, true, "Ember.DateTime is comparable");
+  equal(Ember.compare(dt, dt), 0, "A DateTime instance is equal to itself via compare()");
+  equal(dt.isEqual(dt), true, "A DateTime instance is equal to itself via isEqual()");
+  equal(dt.advance({hour: 1}).isEqual(dt), false);
+  equal(Ember.compare(dt, dt.advance({hour: 1})), -1);
+  equal(Ember.compare(dt.advance({hour: 1}), dt), 1);
+  equal(Ember.DateTime.compareDate(dt, dt.advance({hour: 1})), 0);
+  equal(Ember.DateTime.compareDate(dt, dt.adjust({hour: 0}).advance({day: 1, second: -1})), 0);
+  equal(Ember.DateTime.compareDate(dt, dt.adjust({hour: 0}).advance({day: 1})), -1);
+  equal(Ember.DateTime.compareDate(dt, dt.advance({day: 1})), -1);
+  equal(Ember.compare(
     Ember.DateTime.create({year: 1985, month: 5, day: 7, hour: 23, minute: 0, second: 22, millisecond: 925, timezone:    0}),
     Ember.DateTime.create({year: 1985, month: 5, day: 8, hour:  1, minute: 0, second: 22, millisecond: 925, timezone: -120})),
     0, "The expressions of the same date in two different time zones are considered equal");
   
   try {
-    equals(Ember.DateTime.compareDate(
+    equal(Ember.DateTime.compareDate(
       Ember.DateTime.create({year: 1985, month: 5, day: 7, hour: 23, minute: 0, second: 22, millisecond: 925, timezone:    0}),
       Ember.DateTime.create({year: 1985, month: 5, day: 8, hour:  1, minute: 0, second: 22, millisecond: 925, timezone: -120})),
       0);
@@ -230,46 +230,46 @@ test('compare', function() {
 });
 
 test('Format', function() {
-  equals(
+  equal(
     dt.toFormattedString('%a %A %b %B %d %D %h %H %I %j %m %M %p %S %w %y %Y %%a'),
     'Sat Saturday Jun June 08 8 4 04 04 159 06 00 AM 22 6 85 1985 %a');
   
-  equals(dt.toFormattedString('%Z'), formatTimezone(get(dt, 'timezone')));
-  equals(dt.adjust({ timezone:    0 }).toFormattedString('%Y-%m-%d %H:%M:%S %Z'), '1985-06-08 05:00:22 +00:00');
-  equals(dt.adjust({ timezone: -120 }).toFormattedString('%Y-%m-%d %H:%M:%S %Z'), '1985-06-08 07:00:22 +02:00');
-  equals(dt.adjust({ timezone:  420 }).toFormattedString('%Y-%m-%d %H:%M:%S %Z'), '1985-06-07 22:00:22 -07:00'); // the previous day
+  equal(dt.toFormattedString('%Z'), formatTimezone(get(dt, 'timezone')));
+  equal(dt.adjust({ timezone:    0 }).toFormattedString('%Y-%m-%d %H:%M:%S %Z'), '1985-06-08 05:00:22 +00:00');
+  equal(dt.adjust({ timezone: -120 }).toFormattedString('%Y-%m-%d %H:%M:%S %Z'), '1985-06-08 07:00:22 +02:00');
+  equal(dt.adjust({ timezone:  420 }).toFormattedString('%Y-%m-%d %H:%M:%S %Z'), '1985-06-07 22:00:22 -07:00'); // the previous day
 });
 
 test('fancy getters', function() {
-  equals(get(dt, 'isLeapYear'), NO);
+  equal(get(dt, 'isLeapYear'), false);
 
   // (note must set all three components of a date
   // in order to get predictable results, per JS Date object spec)
-  equals(get(Ember.DateTime.create({ year: 1900, month: 1, day: 1 }), 'isLeapYear'), NO);
-  equals(get(Ember.DateTime.create({ year: 2000, month: 1, day: 1 }), 'isLeapYear'), YES);
-  equals(get(Ember.DateTime.create({ year: 2004, month: 1, day: 1 }), 'isLeapYear'), YES);
+  equal(get(Ember.DateTime.create({ year: 1900, month: 1, day: 1 }), 'isLeapYear'), false);
+  equal(get(Ember.DateTime.create({ year: 2000, month: 1, day: 1 }), 'isLeapYear'), true);
+  equal(get(Ember.DateTime.create({ year: 2004, month: 1, day: 1 }), 'isLeapYear'), true);
   
-  equals(get(dt, 'daysInMonth'), 30); // june
-  equals(get(Ember.DateTime.create({ year: 2000, month: 2, day: 1 }), 'daysInMonth'), 29);
-  equals(get(Ember.DateTime.create({ year: 2001, month: 2, day: 1 }), 'daysInMonth'), 28);
+  equal(get(dt, 'daysInMonth'), 30); // june
+  equal(get(Ember.DateTime.create({ year: 2000, month: 2, day: 1 }), 'daysInMonth'), 29);
+  equal(get(Ember.DateTime.create({ year: 2001, month: 2, day: 1 }), 'daysInMonth'), 28);
   
-  equals(get(dt, 'dayOfYear'), 159);
-  equals(get(Ember.DateTime.create({ year: 2000, month: 12, day: 31 }), 'dayOfYear'), 366);
-  equals(get(Ember.DateTime.create({ year: 2001, month: 12, day: 31 }), 'dayOfYear'), 365);
+  equal(get(dt, 'dayOfYear'), 159);
+  equal(get(Ember.DateTime.create({ year: 2000, month: 12, day: 31 }), 'dayOfYear'), 366);
+  equal(get(Ember.DateTime.create({ year: 2001, month: 12, day: 31 }), 'dayOfYear'), 365);
 
-  equals(get(dt, 'week'), 22);
-  equals(get(Ember.DateTime.create({ year: 2006, month:  1, day:  1 }), 'week0'),  1);
-  equals(get(Ember.DateTime.create({ year: 2006, month:  1, day:  1 }), 'week1'),  0);
-  equals(get(Ember.DateTime.create({ year: 2006, month:  1, day:  8 }), 'week0'),  2);
-  equals(get(Ember.DateTime.create({ year: 2006, month:  1, day:  8 }), 'week1'),  1);
-  equals(get(Ember.DateTime.create({ year: 2006, month: 12, day: 31 }), 'week0'), 53);
-  equals(get(Ember.DateTime.create({ year: 2006, month: 12, day: 31 }), 'week1'), 52);
+  equal(get(dt, 'week'), 22);
+  equal(get(Ember.DateTime.create({ year: 2006, month:  1, day:  1 }), 'week0'),  1);
+  equal(get(Ember.DateTime.create({ year: 2006, month:  1, day:  1 }), 'week1'),  0);
+  equal(get(Ember.DateTime.create({ year: 2006, month:  1, day:  8 }), 'week0'),  2);
+  equal(get(Ember.DateTime.create({ year: 2006, month:  1, day:  8 }), 'week1'),  1);
+  equal(get(Ember.DateTime.create({ year: 2006, month: 12, day: 31 }), 'week0'), 53);
+  equal(get(Ember.DateTime.create({ year: 2006, month: 12, day: 31 }), 'week1'), 52);
 
-  equals(get(dt, 'lastMonday').toFormattedString('%A'), 'Monday');
-  equals(get(dt, 'nextFriday').toFormattedString('%A'), 'Friday');
-  equals(get(dt, 'lastWednesday').toFormattedString('%A'), 'Wednesday');
+  equal(get(dt, 'lastMonday').toFormattedString('%A'), 'Monday');
+  equal(get(dt, 'nextFriday').toFormattedString('%A'), 'Friday');
+  equal(get(dt, 'lastWednesday').toFormattedString('%A'), 'Wednesday');
   
-  equals(
+  equal(
     get(Ember.DateTime.create({ year: 2010, month: 9, day: 29, hour: 0, minute: 30, timezone: -120 }).adjust({ day: 1 }), 'lastMonday').toISO8601(),
     "2010-08-30T00:30:00+02:00");
 });
@@ -317,45 +317,45 @@ test('parse', function() {
 });
 
 test('parse with time zones',function() {
-  equals(
+  equal(
     Ember.DateTime.parse('08/05/1985 01:00:22 %a -0700', '%d/%m/%Y %H:%M:%S %%a %Z').toISO8601(),
     "1985-05-08T01:00:22-07:00");
-  equals(
+  equal(
     Ember.DateTime.parse('08/05/1985 01:00:22 %a +02:00', '%d/%m/%Y %H:%M:%S %%a %Z').toISO8601(),
     "1985-05-08T01:00:22+02:00");
-  equals(
+  equal(
     Ember.DateTime.parse('07/01/2020 18:33:22 %a Z', '%d/%m/%Y %H:%M:%S %%a %Z').toISO8601(),
     "2020-01-07T18:33:22+00:00");
 });
 
 test('parse without a format uses default ISO8601', function() {
-  equals(Ember.DateTime.parse("2010-09-17T18:35:08Z").toISO8601(), "2010-09-17T18:35:08+00:00");
+  equal(Ember.DateTime.parse("2010-09-17T18:35:08Z").toISO8601(), "2010-09-17T18:35:08+00:00");
 });
 
 test('parse with hours and meridian', function(){
-  equals(Ember.DateTime.parse("03/25/2011 5:12:50PM Z", "%m/%d/%Y %I:%M:%S%p %Z").toISO8601(), "2011-03-25T17:12:50+00:00");
-  equals(Ember.DateTime.parse("03/25/2011 5:12:50PM Z", "%m/%d/%Y %i:%M:%S%p %Z").toISO8601(), "2011-03-25T17:12:50+00:00");
-  equals(Ember.DateTime.parse("03/25/2011 05:12:50PM Z", "%m/%d/%Y %I:%M:%S%p %Z").toISO8601(), "2011-03-25T17:12:50+00:00");
-  equals(Ember.DateTime.parse("03/25/2011 05:12:50PM Z", "%m/%d/%Y %i:%M:%S%p %Z").toISO8601(), "2011-03-25T17:12:50+00:00");
+  equal(Ember.DateTime.parse("03/25/2011 5:12:50PM Z", "%m/%d/%Y %I:%M:%S%p %Z").toISO8601(), "2011-03-25T17:12:50+00:00");
+  equal(Ember.DateTime.parse("03/25/2011 5:12:50PM Z", "%m/%d/%Y %i:%M:%S%p %Z").toISO8601(), "2011-03-25T17:12:50+00:00");
+  equal(Ember.DateTime.parse("03/25/2011 05:12:50PM Z", "%m/%d/%Y %I:%M:%S%p %Z").toISO8601(), "2011-03-25T17:12:50+00:00");
+  equal(Ember.DateTime.parse("03/25/2011 05:12:50PM Z", "%m/%d/%Y %i:%M:%S%p %Z").toISO8601(), "2011-03-25T17:12:50+00:00");
 });
 
 test('invalid day/month range', function(){
-  equals(Ember.DateTime.parse('2010-03-32T10:10:10Z'), null);
-  equals(Ember.DateTime.parse('2010--1-10T10:10:10Z'), null);
+  equal(Ember.DateTime.parse('2010-03-32T10:10:10Z'), null);
+  equal(Ember.DateTime.parse('2010--1-10T10:10:10Z'), null);
 
-  equals(Ember.DateTime.parse('2010-13-10T10:10:10Z'), null);
+  equal(Ember.DateTime.parse('2010-13-10T10:10:10Z'), null);
 
-  equals(Ember.DateTime.parse('2010-04-31T10:10:10Z'), null);
-  equals(Ember.DateTime.parse('2010-06-31T10:10:10Z'), null);
-  equals(Ember.DateTime.parse('2010-09-31T10:10:10Z'), null);
-  equals(Ember.DateTime.parse('2010-11-31T10:10:10Z'), null);
+  equal(Ember.DateTime.parse('2010-04-31T10:10:10Z'), null);
+  equal(Ember.DateTime.parse('2010-06-31T10:10:10Z'), null);
+  equal(Ember.DateTime.parse('2010-09-31T10:10:10Z'), null);
+  equal(Ember.DateTime.parse('2010-11-31T10:10:10Z'), null);
 
-  equals(Ember.DateTime.parse('2012-02-30T10:10:10Z'), null);
+  equal(Ember.DateTime.parse('2012-02-30T10:10:10Z'), null);
 });
 
 test('bad parsing', function() {
-  equals(Ember.DateTime.parse(Ember.DateTime.parse("foo")), null);
-  equals(Ember.DateTime.parse("2010-09-17T18:35:08Z", Ember.DATETIME_ISO8601).toISO8601(), "2010-09-17T18:35:08+00:00");
+  equal(Ember.DateTime.parse(Ember.DateTime.parse("foo")), null);
+  equal(Ember.DateTime.parse("2010-09-17T18:35:08Z", Ember.DATETIME_ISO8601).toISO8601(), "2010-09-17T18:35:08+00:00");
 });
 
 test('binding', function() {
@@ -365,7 +365,7 @@ test('binding', function() {
   var format = '%Y-%m-%d %H:%M:%S';
   var binding = Ember.Binding.dateTime(format).from('fromObject.value').to('toObject.value').connect(root);
   Ember.run.sync();
-  equals(get(toObject, 'value'), dt.toFormattedString(format));
+  equal(get(toObject, 'value'), dt.toFormattedString(format));
 });
 
 test('cache', function() {
@@ -374,7 +374,7 @@ test('cache', function() {
   var cache_length_1 = Ember.keys(Ember.DateTime._dt_cache).length;
   Ember.DateTime.create(options);
   var cache_length_2 = Ember.keys(Ember.DateTime._dt_cache).length;
-  equals(
+  equal(
     cache_length_1, cache_length_2,
     "Creating twice the same datetime should not modify the cache's length");
   

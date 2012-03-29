@@ -3,7 +3,7 @@ require('ember-validators/validators/validator');
 var get = Ember.get;
 
 Ember.Validator.Number = Ember.Validator.extend({
-  name: 'number',
+
   validate: function(form, field) {
     var value = get(field, 'value');
     return (value === '') || !(isNaN(value) || isNaN(parseFloat(value)));
@@ -27,4 +27,5 @@ Ember.Validator.Number = Ember.Validator.extend({
       else { return text.match(/^[\-{0,1}]?[0-9,\0]*\.?[0-9\0]+/) === text; }
     }
   }
+
 });

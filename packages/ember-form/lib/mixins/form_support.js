@@ -2,7 +2,7 @@ var get = Ember.get, getPath = Ember.getPath;
 
 Ember.FormSupport = Ember.Mixin.create({
   isSubmit: false,
-  disabledBinding: Em.Binding.oneWay('form.disabled'),
+  disabledBinding: Ember.Binding.oneWay('form.disabled'),
 
   form: Ember.computed(function() {
     return this.nearestInstanceOf(Ember.Form);
