@@ -6,22 +6,22 @@ module("EnumerableExt", {
   }
 });
 
-test("should return the highest value of the property in the enumerable", function() {
+test("maxProperty should return the highest value of the property in the enumerable", function() {
   var max = array.maxProperty('age');
   equal(max, 77);
 });
 
-test("should return the start value if no higher value of the property in the enumerable is found", function() {
+test("maxProperty should return the start value if no higher value of the property in the enumerable is found", function() {
   var max = array.maxProperty('age', 100);
   equal(max, 100);
 });
 
-test("should return the highest value of the property in the enumerable", function() {
+test("minProperty should return the highest value of the property in the enumerable", function() {
   var min = array.minProperty('age');
   equal(min, 7);
 });
 
-test("should return the start value if no higher value of the property in the enumerable is found", function() {
+test("minProperty should return the start value if no higher value of the property in the enumerable is found", function() {
   var min = array.minProperty('age', 1);
   equal(min, 1);
 });
