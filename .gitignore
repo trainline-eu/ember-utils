@@ -1,2 +1,4 @@
 dist
 tests/source
+tmp
+tests/ember-addons-tests.js
