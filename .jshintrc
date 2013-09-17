@@ -1,20 +1,24 @@
 {
     "predef": [
+        "QUnit",
+        "define",
         "console",
         "Ember",
         "DS",
         "Handlebars",
         "Metamorph",
-        "ember_assert",
-        "ember_warn",
-        "ember_deprecate",
-        "ember_deprecateFunc",
+        "RSVP",
         "require",
+        "requireModule",
         "equal",
+        "notEqual",
+        "notStrictEqual",
         "test",
+        "asyncTest",
         "testBoth",
         "testWithDefault",
         "raises",
+        "throws",
         "deepEqual",
         "start",
         "stop",
@@ -23,13 +27,15 @@
         "module",
         "expect",
         "minispade",
-        "URI",
-        "History"
+        "expectAssertion",
+
+        // A safe subset of "browser:true":
+        "window", "location", "document", "XMLSerializer",
+        "setTimeout", "clearTimeout", "setInterval", "clearInterval"
     ],
 
     "node" : false,
-    "es5" : true,
-    "browser" : true,
+    "browser" : false,
 
     "boss" : true,
     "curly": false,
@@ -51,5 +57,6 @@
     "undef": true,
     "sub": true,
     "strict": false,
-    "white": false
+    "white": false,
+    "eqnull": true
 }

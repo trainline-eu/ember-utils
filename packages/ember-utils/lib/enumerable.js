@@ -1,22 +1,68 @@
+var get = Ember.get, map = Ember.ArrayPolyfills.map;
 
-var get = Ember.get;
-
-var flatten = function() {
-  return this.reduce(function(array, value) {
-    if (value && value.isEnumerable) {
-      return array.concat(flatten.apply(value));
-    } else {
-      array.push(value);
-      return array;
-    }
-  }, []);
-};
+function toArray(arr) {
+  map.call(arr, function(a) { return a; });
+}
 
 var EnumerableExt = Ember.Mixin.create({
 
-  flatten: flatten,
+  /**
+  */
+  isEqual: function(ary) {
+    if (!ary) { return false ; }
+    if (ary === this) { return true; }
 
-  sortProperty: function(key) {
+    var loc = get(ary, 'length');
+    if (loc !== get(this, 'length')) { return false; }
+
+    while (--loc >= 0) {
+      if (!Ember.isEqual(ary.objectAt(loc), this.objectAt(loc))) { return false; }
+    }
+    return true;
+  },
+
+  /**
+  */
+  max: function() {
+    return Math.max.apply(Math, this);
+  },
+
+  /**
+  */
+  min: function() {
+    return Math.min.apply(Math, this);
+  },
+
+  /**
+  */
+  sum: function() {
+    return this.reduce(function(sum, x) { return sum+x; }, 0);
+  },
+
+  /**
+  */
+  flatten: function() {
+    return this.reduce(function(a, b) {
+      a = (a && Ember.isArray(a)) ? toArray(a) : a;
+      b = (b && Ember.isArray(b)) ? toArray(b) : b;
+      return a.concat(b);
+    }, []);
+  },
+
+  uniqCompare: function() {
+    var ret = [];
+    this.forEach(function(a) {
+      var found = ret.find(function(b) {
+        return Ember.compare(a, b) === 0;
+      });
+      if (!found) { ret.push(a); }
+    }, this);
+    return ret;
+  },
+
+  /**
+  */
+  sortBy: function(key) {
     var keys = (typeof key === 'string') ? arguments : key,
         len  = keys.length,
         src;
@@ -59,7 +105,7 @@ var EnumerableExt = Ember.Mixin.create({
 
     this.forEach(function(next) {
       cur = next ? get(next, key) : null;
-      if (Ember.none(grouped[cur])) {
+      if (Ember.isNone(grouped[cur])) {
         grouped[cur] = []; keyValues.push(cur);
       }
       grouped[cur].push(next);

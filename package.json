@@ -1,0 +1,23 @@
+{
+  "name": "ember-utils",
+  "version": "0.1.0",
+  "main": "ember-utils.js",
+  "scripts": {
+    "build": "grunt build",
+    "test": "grunt build test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/capitainetrain/ember-utils.git"
+  },
+  "author": "Paul Chavard, Grégoir Novel",
+  "license": "MIT",
+  "devDependencies": {
+    "load-grunt-tasks": "~0.1.0",
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-clean": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.2",
+    "grunt-contrib-uglify": "~0.2.2"
+  }
+}
