@@ -182,6 +182,6 @@ var EnumerableExt = Ember.Mixin.create({
 
 Ember.Enumerable.reopen(EnumerableExt);
 
-if (Ember.EXTEND_PROTOTYPES) {
+if (Ember.EXTEND_PROTOTYPES === true || Ember.EXTEND_PROTOTYPES.Array) {
   EnumerableExt.apply(Array.prototype);
 }
